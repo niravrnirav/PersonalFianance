@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
@@ -25,7 +25,7 @@ export default function Home() {
       <Sidebar />
 
       {/* Main content */}
-      <div className="flex-grow p-4">
+      <div className="flex-grow p-4 bg-[#E5E7EB] dark:bg-gray-800">
         <div className="flex justify-end">
           <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
         </div>
