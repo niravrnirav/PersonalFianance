@@ -9,7 +9,6 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  useDisclosure,
   Input,
   Select,
   SelectItem,
@@ -23,8 +22,17 @@ type AccountData = {
   balance: number;
 };
 
-export default function AddAccountModal() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+type AddAccountModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onAddAccount: (newAccount: AccountData) => void;
+};
+
+export default function AddAccountModal({
+  isOpen,
+  onClose,
+  onAddAccount,
+}: AddAccountModalProps) {
   const [newAccount, setNewAccount] = useState<AccountData>({
     name: "",
     type: AccountType.Savings,
@@ -36,77 +44,75 @@ export default function AddAccountModal() {
     value: string | number,
   ) => {
     setNewAccount((prev) => ({ ...prev, [field]: value }));
+    console.log(value);
+  };
+
+  const handleSubmit = () => {
+    onAddAccount(newAccount); // Pass the new account to parent component
+    setNewAccount({ name: "", type: AccountType.Savings, balance: 0 }); // Reset the form fields
+    onClose(); // Close the modal
   };
 
   return (
-    <>
-      <Button color="primary" onPress={onOpen}>
-        Open Modal
-      </Button>
-      <Modal
-        backdrop="blur"
-        isOpen={isOpen}
-        placement="top-center"
-        onOpenChange={onOpenChange}
-      >
-        <ModalContent>
-          {(onClose: () => void) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Log in</ModalHeader>
-              <ModalBody>
-                <Input
-                  isClearable
-                  variant="bordered"
-                  fullWidth
-                  isRequired
-                  label="Account Name"
-                  placeholder="Enter account name"
-                  value={newAccount.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                />
-                <Select
-                  variant="bordered"
-                  fullWidth
-                  isRequired
-                  label="Account Type"
-                  placeholder="Select account type"
-                  value={newAccount.type}
-                  onChange={(e) =>
-                    handleInputChange("type", e.target.value as AccountType)
-                  }
-                >
-                  {Object.values(AccountType).map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </Select>
-                <Input
-                  isClearable
-                  variant="bordered"
-                  fullWidth
-                  isRequired
-                  label="Balance"
-                  placeholder="Enter current account balance"
-                  type="number"
-                  value={newAccount.balance.toString()}
-                  onChange={(e) =>
-                    handleInputChange("balance", Number(e.target.value))
-                  }
-                />
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Add Account
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+    <Modal
+      backdrop="blur"
+      isOpen={isOpen}
+      placement="top-center"
+      onOpenChange={onClose}
+    >
+      <ModalContent>
+        <ModalHeader className="flex flex-col gap-1">Add Account</ModalHeader>
+        <ModalBody>
+          <Input
+            isClearable
+            variant="bordered"
+            fullWidth
+            isRequired
+            label="Account Name"
+            placeholder="Enter account name"
+            value={newAccount.name}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+          />
+          <Select
+            variant="bordered"
+            fullWidth
+            isRequired
+            label="Account Type"
+            placeholder="Select account type"
+            value={newAccount.type}
+            onChange={(e) =>
+              handleInputChange("type", e.target.value as AccountType)
+            }
+          >
+            {Object.values(AccountType).map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </Select>
+          <Input
+            isClearable
+            variant="bordered"
+            fullWidth
+            isRequired
+            label="Balance"
+            placeholder="Enter current account balance"
+            type="number"
+            value={newAccount.balance.toString()}
+            onChange={(e) =>
+              handleInputChange("balance", Number(e.target.value))
+            }
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" variant="flat" onPress={onClose}>
+            Close
+          </Button>
+          <Button color="primary" onPress={handleSubmit}>
+            Add Account
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
