@@ -36,8 +36,6 @@ export default function AddAccountModal() {
     value: string | number,
   ) => {
     setNewAccount((prev) => ({ ...prev, [field]: value }));
-    console.log(value);
-    console.log(newAccount);
   };
 
   return (
