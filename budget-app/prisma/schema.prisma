@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id        Int       @id @default(autoincrement())
+  name      String
+  type      String
+  balance   Decimal    @default(0.0)
+  createdAt DateTime   @default(now())
+  transactions Transaction[]
+  recurringTransactions RecurringTransaction[]
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  account     Account  @relation(fields: [accountId], references: [id])
+  accountId   Int
+  type        String   // e.g., "deposit" or "withdrawal"
+  amount      Decimal
+  date        DateTime
+  description String?
+}
+
+model RecurringTransaction {
+  id          Int      @id @default(autoincrement())
+  account     Account  @relation(fields: [accountId], references: [id])
+  accountId   Int
+  frequency   String   // e.g., "weekly", "monthly"
+  amount      Decimal
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+}
